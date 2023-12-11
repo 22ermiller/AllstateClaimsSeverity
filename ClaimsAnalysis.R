@@ -102,7 +102,7 @@ forest_wf <- workflow() %>%
 # Grid of values to tune over
 tuning_grid <- grid_regular(mtry(range = c(1,132)),
                             min_n(),
-                            levels = 1)
+                            levels = 2)
 
 # Split data for cross validation
 folds <- vfold_cv(train, v = 5, repeats = 1)

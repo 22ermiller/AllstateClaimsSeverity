@@ -8,8 +8,8 @@ library(embed) # for target encoding
 ## Read in Data
 
 test <- vroom("test.csv")
-train <- vroom("train.csv") %>%
-  mutate(loss = log(loss)) # transform to log
+train <- vroom("train.csv") #%>%
+  #mutate(loss = log(loss)) # transform to log
 
 my_recipe <- recipe(loss~., data = train) %>%
   step_lencode_mixed(all_nominal_predictors(), outcome = vars(loss)) %>%
@@ -35,7 +35,7 @@ boost_wf <- workflow() %>%
 tuning_grid <- grid_regular(tree_depth(),
                             trees(),
                             learn_rate(),
-                            levels = 5)
+                            levels = 2)
 
 # split data into folds
 folds <- vfold_cv(train, v = 5, repeats = 1)
@@ -59,7 +59,7 @@ boost_preds <- predict(final_boost_workflow,
                        new_data = test)
 
 final_boost_preds <- tibble(id = test$id,
-                            loss = exp(boost_preds$.pred_class))
+                            loss = boost_preds$.pred)
 
 vroom_write(final_boost_preds, "boost_predictions.csv", delim = ",")
 
